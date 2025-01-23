@@ -55,6 +55,13 @@ class CompanyLoginController extends Controller
                 'error' => true
             ]);
         }
+        if ($check_status->email_verified_at == null) {
+            return response()->json([
+                'class' => 'bg-danger',
+                'message' => 'Your account is not verified, please verify first.',
+                'error' => true
+            ]);
+        }
     
         if ($this->guard()->attempt([
                 'email' => $request->email, 

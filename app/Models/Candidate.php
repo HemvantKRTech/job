@@ -2,13 +2,13 @@
 
 namespace App\Models;
 
-use App\Notifications\CompanyResetPasswordNotification;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 
-class Candidate extends Authenticatable
+class Candidate extends Authenticatable implements MustVerifyEmail
 {
     use Notifiable, HasFactory, SoftDeletes;
     /**
@@ -27,9 +27,9 @@ class Candidate extends Authenticatable
     ];
 
 
-    public function sendPasswordResetNotification($token)
+    public function sendEmailVerificationNotification()
     {
-        $this->notify(new CompanyResetPasswordNotification($token));
+        $this->notify(new \App\Notifications\CustomVerifyEmail());
     }
 
 }

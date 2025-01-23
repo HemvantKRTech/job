@@ -3,6 +3,9 @@ use App\Http\Controllers\Company\Auth\CompanyLoginController;
 use App\Http\Controllers\Company\Auth\CompanyRegisterController;
 use App\Http\Controllers\Company\DashboardController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Foundation\Auth\EmailVerificationRequest;
+use Illuminate\Http\Request;
+
 
 
 Route::get('/', function() {

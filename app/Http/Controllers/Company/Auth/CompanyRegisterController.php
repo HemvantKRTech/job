@@ -4,10 +4,12 @@ namespace App\Http\Controllers\Company\Auth;
 
 use App\Models\Company;
 use App\Http\Controllers\Controller;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Laravel\Socialite\Facades\Socialite;
+use log;
 
 class CompanyRegisterController extends Controller
 {
@@ -41,14 +43,20 @@ class CompanyRegisterController extends Controller
         $company->password = Hash::make($request->password);
         
         if ($company->save()) {
-            Auth::guard('company')->login($company); 
+            try {
+                $company->sendEmailVerificationNotification();
+                \Log::info('Email sent successfully to ' . $company->email);
+            } catch (\Exception $e) {
+                Log::error('Error sending email to ' . $company->email . ': ' . $e->getMessage());
+                dd($e->getMessage()); // Debugging - stops execution to show the error
+            }
 
-            return response()->json([
-                'class' => 'bg-success',
-                'message' => 'Successfully Registered.',
-                'call_back' => route('company.dashboard.index'),
-                'error' => false
-            ]);
+        return response()->json([
+            'class' => 'bg-success',
+            'message' => 'Successfully Registered. Please check your email to verify your account.',
+            'call_back' => null,
+            'error' => false
+        ]);
         }
 
         return response()->json([
@@ -86,6 +94,7 @@ class CompanyRegisterController extends Controller
                     'google_id' => $googleUser->getId(),
                     'avatar' => $googleUser->getAvatar(),
                     'password' => bcrypt('default_password'),
+                    'email_verified_at' => Carbon::now(),
                 ]
             );
 

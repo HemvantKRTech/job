@@ -7,8 +7,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 
-class Company extends Authenticatable
+class Company extends Authenticatable implements MustVerifyEmail
 {
     use Notifiable, HasFactory, SoftDeletes;
     /**
@@ -27,9 +28,9 @@ class Company extends Authenticatable
     ];
 
 
-    public function sendPasswordResetNotification($token)
+    public function sendEmailVerificationNotification()
     {
-        $this->notify(new CompanyResetPasswordNotification($token));
+        $this->notify(new \App\Notifications\CustomVerifyEmail('company'));
     }
 
 }
